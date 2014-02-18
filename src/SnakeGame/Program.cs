@@ -11,8 +11,8 @@ namespace SnakeGame
     {
         static void Main(string[] args)
         {
-            using (AsciiGraphics g = AsciiGraphics.FromUnManagedConsole())
-                g.DrawPoint(new AsciiPen('*', AsciiColors.Blue), new Point(10,10));
+            using (var g = AsciiGraphics.FromUnManagedConsole())
+                g.DrawPoint(new AsciiPen('*', AsciiColors.Yellow), new Point(10,10));
 
             Console.ReadKey(true);
         }
