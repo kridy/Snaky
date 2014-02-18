@@ -1,0 +1,3 @@
+[submodule "externals/ADIPlus"]
+	path = externals/ADIPlus
+	url = git@github.com:kridy/ADIPlus.git
