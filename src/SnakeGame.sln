@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeGame", "SnakeGame\SnakeGame.csproj", "{6FC7BBEC-6DDA-4D21-A5AC-DA716C16AF35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeGame", "\SnakeGame\SnakeGame.csproj", "{6FC7BBEC-6DDA-4D21-A5AC-DA716C16AF35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADIPlus", "..\..\externals\ADIPlus\src\ADI+\ADIPlus.csproj", "{6643BEF9-E8A8-4D7E-A563-496B6F328CA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADIPlus", "..\externals\ADIPlus\src\ADI+\ADIPlus.csproj", "{6643BEF9-E8A8-4D7E-A563-496B6F328CA5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals", "Externals", "{7D37A8FD-3DF8-4573-8052-71DBE2057A7D}"
 EndProject

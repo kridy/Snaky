@@ -1,8 +1,0 @@
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\bin\Debug\SnakeGame.exe.config
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\bin\Debug\SnakeGame.exe
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\bin\Debug\SnakeGame.pdb
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\bin\Debug\ADI+.dll
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\bin\Debug\ADI+.pdb
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\obj\Debug\SnakeGame.csprojResolveAssemblyReference.cache
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\obj\Debug\SnakeGame.exe
-C:\Software\Projects\SnakeGame\src\SnakeGame\SnakeGame\obj\Debug\SnakeGame.pdb

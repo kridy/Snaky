@@ -48,7 +48,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\externals\ADIPlus\src\ADI+\ADIPlus.csproj">
+    <ProjectReference Include="..\..\externals\ADIPlus\src\ADI+\ADIPlus.csproj">
       <Project>{6643bef9-e8a8-4d7e-a563-496b6f328ca5}</Project>
       <Name>ADIPlus</Name>
     </ProjectReference>
