@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ADIPlus.Drawing;
 
@@ -70,21 +71,22 @@ namespace Game
         public void Start()
         {
             m_game.Start();
-            const double FrameCount = 60;
-            const double FrameTime = 1.0/FrameCount; 
+            const double frameCount = 60.0;
+           const double frameTime = 1.0e9 / frameCount;
 
-            double timeLast = 0.0;
+            double timeLast = Time.GetNanoSeconds();
             double timeStart = 0.0;
             double timeDelta = 0.0;
             double timeAccu = 0.0;
             double interplation = 0.0;
 
-            double fpsTime = 0.0;
+            double fpsTime = Time.GetNanoSeconds();
             int fpsCount = 0;
+            int updCounter = 0;
 
             while (m_game.IsRunnig)
             {
-                timeStart = Time.GetHighResolutionTime();
+                timeStart = Time.GetNanoSeconds();
                 timeDelta = timeStart - timeLast;
                 timeLast = timeStart;
 
@@ -92,17 +94,19 @@ namespace Game
                     timeDelta = 0.25;
 
                 timeAccu += timeDelta;
-                while (timeAccu >= FrameTime)
+                while (timeAccu >= frameTime)
                 {
-                    m_game.Update(FrameTime);
-                    timeAccu -= FrameTime;
+                    m_game.Update(frameTime);
+                    timeAccu -= frameTime;
+                    updCounter++;
                 }
-
+                // soh cah toa
                 interplation = 0.0;
 
-                if (fpsTime + Time.GetOneSecond() < timeStart)
+                if (timeStart > (fpsTime + 1.0e9 ))
                 {
-                    Console.Title = string.Format("FPS: {0}", fpsCount);
+                    Console.Title = string.Format("FPS: {0} UPD: {1}", fpsCount, updCounter);
+                    updCounter = 0;
                     fpsCount = 0;
                     fpsTime = timeStart;
                 }
@@ -114,29 +118,30 @@ namespace Game
     }
 
     internal class Time {
-        
-        private static readonly long Frequency;
 
+        private static readonly long frequency;
+        private static readonly double multiplier = 1.0e9;
         static Time()
         {
-            if (QueryPerformanceFrequency(out Frequency) == false)
+            if (QueryPerformanceFrequency(out frequency) == false)
             {
                 // Frequency not supported
                 throw new Win32Exception();
             }
         }
 
-        public static double GetOneSecond()
-        {
-            return Frequency;
-        }
-
-        public static double GetHighResolutionTime()
+        public static double GetNanoSeconds(int iterations)
         {
             long counter;
+
             QueryPerformanceCounter(out counter);
 
-            return counter/(double)Frequency;
+            return ((((double)counter * (double)multiplier) / (double)frequency) / iterations);
+        }
+
+        public static double GetNanoSeconds()
+        {
+            return GetNanoSeconds(1);
         }
 
         [DllImport("KERNEL32")]
@@ -159,6 +164,8 @@ namespace Game
         public void Initialize()
         {
             IsRunnig = false;
+            bufferRender = AsciiGraphics.FromCharImage(buffer);
+            dispRender = AsciiGraphics.FromUnManagedConsole();
         }
 
         public bool IsRunnig { get; protected set; }
@@ -173,8 +180,18 @@ namespace Game
             IsRunnig = true;
         }
 
+        private static Image buffer = new Image(100,50);
+        private AsciiGraphics bufferRender;
+        private AsciiGraphics dispRender;
+
+
         public void Render(double interplation)
-        {           
+        {
+            for (uint i = 0; i < buffer.Height; i++)
+            {
+                bufferRender.DrawHorizontalLine(new AsciiPen('*', AsciiColors.Yellow),0,i, buffer.Width);
+            }
+            dispRender.DrawImage(buffer);
         }
     }
 
