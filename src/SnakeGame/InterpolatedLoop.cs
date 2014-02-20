@@ -22,7 +22,7 @@ namespace SnakeGame
             {
                 game.Update(state);
                 updateCount++;
-                accumulatedTime -= frameRate;
+                accumulatedTime = accumulatedTime - frameRate;
             }
             
             game.Render(state);

@@ -82,7 +82,7 @@
             NanoSeconds = m_delta;
             MicroSeconds = m_delta / 1000.0;
             MilliSeconds = m_delta / 1000000.0;
-            Seconds = m_delta / 1.0e-9;
+            Seconds = m_delta*1.0e9;
 
         }
         /// <summary>
