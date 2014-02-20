@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using ADIPlus.Drawing;
 
-namespace Game
+namespace SnakeGame
 {
     class Program
     {
@@ -24,7 +19,7 @@ namespace Game
         }
     }
 
-    internal class GameEngine
+    public class GameEngine
     {
         private readonly Game m_game;
         private readonly ConsoleDisplay m_display;
@@ -43,7 +38,7 @@ namespace Game
                 
             m_display = display;
 
-            m_gameLoop = new GameLoop();
+            m_gameLoop = new GameLoop(new InterpolatedLoop());
         }
 
         public void Initialize()
@@ -59,99 +54,6 @@ namespace Game
         }
     }
 
-    internal class GameLoop {
-        private Game m_game;
-
-        public void Initialize(Game game)
-        {
-            if (game == null) throw new ArgumentNullException("game");
-            m_game = game;
-        }
-
-        public void Start()
-        {
-            m_game.Start();
-            const double frameCount = 60.0;
-           const double frameTime = 1.0e9 / frameCount;
-
-            double timeLast = Time.GetNanoSeconds();
-            double timeStart = 0.0;
-            double timeDelta = 0.0;
-            double timeAccu = 0.0;
-            double interplation = 0.0;
-
-            double fpsTime = Time.GetNanoSeconds();
-            int fpsCount = 0;
-            int updCounter = 0;
-
-            while (m_game.IsRunnig)
-            {
-                timeStart = Time.GetNanoSeconds();
-                timeDelta = timeStart - timeLast;
-                timeLast = timeStart;
-
-                if (timeDelta > 0.25)
-                    timeDelta = 0.25;
-
-                timeAccu += timeDelta;
-                while (timeAccu >= frameTime)
-                {
-                    m_game.Update(frameTime);
-                    timeAccu -= frameTime;
-                    updCounter++;
-                }
-                // soh cah toa
-                interplation = 0.0;
-
-                if (timeStart > (fpsTime + 1.0e9 ))
-                {
-                    Console.Title = string.Format("FPS: {0} UPD: {1}", fpsCount, updCounter);
-                    updCounter = 0;
-                    fpsCount = 0;
-                    fpsTime = timeStart;
-                }
-
-                m_game.Render(interplation);
-                fpsCount++;
-            }
-        }
-    }
-
-    internal class Time {
-
-        private static readonly long frequency;
-        private static readonly double multiplier = 1.0e9;
-        static Time()
-        {
-            if (QueryPerformanceFrequency(out frequency) == false)
-            {
-                // Frequency not supported
-                throw new Win32Exception();
-            }
-        }
-
-        public static double GetNanoSeconds(int iterations)
-        {
-            long counter;
-
-            QueryPerformanceCounter(out counter);
-
-            return ((((double)counter * (double)multiplier) / (double)frequency) / iterations);
-        }
-
-        public static double GetNanoSeconds()
-        {
-            return GetNanoSeconds(1);
-        }
-
-        [DllImport("KERNEL32")]
-        private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool QueryPerformanceFrequency(out long lpFrequency);
-
-    }
-
     internal class SnakeGame : Game
     {
         public SnakeGame()
@@ -160,42 +62,69 @@ namespace Game
         }
     }
 
-    internal class Game {
+    public class Game {
+
+        private Image buffer;
+        private AsciiGraphics bufferRender;
+        private AsciiGraphics dispRender;        
+        
         public void Initialize()
         {
             IsRunnig = false;
+            buffer = new Image(100, 50);
             bufferRender = AsciiGraphics.FromCharImage(buffer);
             dispRender = AsciiGraphics.FromUnManagedConsole();
+
+            bufferRender.Clear();
         }
 
         public bool IsRunnig { get; protected set; }
 
-        public void Update(double frameTime)
+        private Point position = new Point(0,25);
+        private double velocity = 2;
+
+        double x = 0;
+
+        public void Update(LoopState state)
         {
+            state.Updates();
+
             
+            //for (uint i = 0; i < buffer.Height; i++)
+            //{
+            //    bufferRender.DrawHorizontalLine(new AsciiPen('O', AsciiColors.Red), 0, i, buffer.Width);
+            //}
+
+
+            x += (position.X) + (velocity*((double)1/(double)60));
+           ;            ;
+            position = new Point((uint)x, position.Y);
+            Debug.WriteLine(position.X + "," + position.Y);
+
+            bufferRender.DrawPoint(new AsciiPen('O', AsciiColors.Red), position);
+
+            if (position.X >= 100 || position.X <= 0)
+            {
+                velocity *= -1;
+            }
+        }
+
+        public void Render(LoopState state)
+        {
+            state.Renderings();
+
+            
+            
+            dispRender.DrawImage(buffer);
         }
 
         public void Start()
         {
             IsRunnig = true;
         }
-
-        private static Image buffer = new Image(100,50);
-        private AsciiGraphics bufferRender;
-        private AsciiGraphics dispRender;
-
-
-        public void Render(double interplation)
-        {
-            for (uint i = 0; i < buffer.Height; i++)
-            {
-                bufferRender.DrawHorizontalLine(new AsciiPen('*', AsciiColors.Yellow),0,i, buffer.Width);
-            }
-            dispRender.DrawImage(buffer);
-        }
     }
 
-    internal class ConsoleDisplay : Display
+    public class ConsoleDisplay : Display
     {
         private readonly int m_width;
         private readonly int m_height;
@@ -219,9 +148,9 @@ namespace Game
         }
     }
 
-    internal abstract class Display
+    public abstract class Display
     {
         public abstract int Width { get; }
-        public abstract int Height { get;}
+        public abstract int Height { get;}        
     }
 }
