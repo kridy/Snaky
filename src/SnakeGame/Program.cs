@@ -9,7 +9,6 @@ namespace SnakeGame
     {
         static void Main(string[] args)
         {
-            
             var disp = new ConsoleDisplay(100, 50);
             var game= new SnakeGame();
             var engine = new GameEngine(game, disp);
@@ -62,6 +61,62 @@ namespace SnakeGame
         }
     }
 
+    public class GameObject
+    {
+        private double x;
+        private double y;
+
+        private double ax;
+        private double ay;
+
+        private int xVelocity;
+        private int yVelocity;
+        private double lastX;
+        private double lastY;
+
+        //private double xDist;
+        //private double yDist;
+        
+
+        public GameObject()
+        {
+            xVelocity = 10;
+            yVelocity = 0;
+            x = 0;
+            y = 25;
+
+            ax = x;
+            ay = y;
+        }
+
+        public void Update(LoopState state)
+        {
+            lastX = x;
+            lastY = y;
+            x += xVelocity * state.Seconds;
+            y += yVelocity * state.Seconds;
+
+            HandelCollition();
+        }
+
+        private void HandelCollition()
+        {
+            if (x > 10)
+            {
+                xVelocity = -xVelocity;
+                x = 10;
+            }
+        }
+
+        public void Render(LoopState state, AsciiGraphics g)
+        {
+            ax = x;
+            ay = y;
+
+            g.DrawPoint(new AsciiPen('O', AsciiColors.Red), new Point((uint)ax, (uint)ay));
+        }
+    }
+
     public class Game {
 
         private Image buffer;
@@ -80,41 +135,24 @@ namespace SnakeGame
 
         public bool IsRunnig { get; protected set; }
 
-        private Point position = new Point(0,25);
-        private double velocity = 2;
+        GameObject dot = new GameObject();
 
-        double x = 0;
+        public void ReadInput(LoopState state) 
+        {}
 
         public void Update(LoopState state)
         {
             state.Updates();
+            bufferRender.Clear();
 
-            
-            //for (uint i = 0; i < buffer.Height; i++)
-            //{
-            //    bufferRender.DrawHorizontalLine(new AsciiPen('O', AsciiColors.Red), 0, i, buffer.Width);
-            //}
-
-
-            x += (position.X) + (velocity*((double)1/(double)60));
-           ;            ;
-            position = new Point((uint)x, position.Y);
-            Debug.WriteLine(position.X + "," + position.Y);
-
-            bufferRender.DrawPoint(new AsciiPen('O', AsciiColors.Red), position);
-
-            if (position.X >= 100 || position.X <= 0)
-            {
-                velocity *= -1;
-            }
+            dot.Update(state);
         }
 
         public void Render(LoopState state)
         {
-            state.Renderings();
+            state.Renderings(); 
 
-            
-            
+            dot.Render(state, bufferRender);                     
             dispRender.DrawImage(buffer);
         }
 

@@ -79,10 +79,10 @@
             m_delta = m_start - m_last;
             m_last = m_start;
 
-            NanoSeconds = m_delta;
-            MicroSeconds = m_delta / 1000.0;
-            MilliSeconds = m_delta / 1000000.0;
-            Seconds = m_delta*1.0e9;
+            NanoSeconds     = m_delta;
+            MicroSeconds    = m_delta * 1.0e-3;
+            MilliSeconds    = m_delta * 1.0e-6;
+            Seconds         = m_delta * 1.0e-9;
 
         }
         /// <summary>

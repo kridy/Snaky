@@ -6,7 +6,7 @@ namespace SnakeGame
     {
         private const double frameCount = 60;
         private const double frameRate = 1/frameCount;
-        private const int maxCount = 5000;
+        private const int maxCount = 25;
         private const bool yield = true;
 
         private double accumulatedTime = 0.0;
@@ -27,8 +27,7 @@ namespace SnakeGame
             
             game.Render(state);
 
-            //if (yield)
-            //    Thread.Yield();
+            Thread.Yield();
         }
     }
 }
