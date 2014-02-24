@@ -80,7 +80,7 @@ namespace SnakeGame
 
         public GameObject()
         {
-            xVelocity = 10;
+            xVelocity = 1000;
             yVelocity = 0;
             x = 0;
             y = 25;
@@ -93,26 +93,34 @@ namespace SnakeGame
         {
             lastX = x;
             lastY = y;
-            x += xVelocity * state.Seconds;
-            y += yVelocity * state.Seconds;
+            x += xVelocity*/*(1.0/60.0);//*/ state.Seconds;
+            y += yVelocity*/*(1.0/60.0);//*/ state.Seconds;
+
+            //Debug.WriteLine("x,y - {0},{1}", x , y);
 
             HandelCollition();
         }
 
         private void HandelCollition()
         {
-            if (x > 10)
+            if (x > 100)
             {
                 xVelocity = -xVelocity;
-                x = 10;
+                x = 99;
+            }
+
+            if (x < 0)
+            {
+                xVelocity = -xVelocity;
+                x = 1;
             }
         }
 
         public void Render(LoopState state, AsciiGraphics g)
         {
-            ax = x;
-            ay = y;
-
+            ax = /*x;//*/ (x - lastX) * state.Interpolation + lastX;
+            ay = /*y;//*/ (y - lastY) * state.Interpolation + lastY;
+            Debug.WriteLine("ay,ay - {0},{1}", ax, ay);
             g.DrawPoint(new AsciiPen('O', AsciiColors.Red), new Point((uint)ax, (uint)ay));
         }
     }
